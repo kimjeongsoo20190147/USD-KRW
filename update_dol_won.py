@@ -15,13 +15,13 @@ README_PATH = "README.md"
 def get_exchange_rate():
     """Exchangerate API를 호출하여 달러-원 및 루블-원 환율 정보를 가져옴"""
     response = requests.get(URL)
-    if response.status_code == 200:
-        data = response.json()
-        if data.get("result") == "success":  # API 응답 상태 확인
-            krw_rate = data["conversion_rates"].get("KRW", "N/A")  # USD to KRW 환율
-            rub_rate = data["conversion_rates"].get("RUB", "N/A")  # USD to RUB 환율
-            return f"미국 달러(USD) 환율: {krw_rate} 원\n러시아 루블(RUB) 환율: {rub_rate} 루블"
+    data = response.json()
+    if data.get("result") == "success":  # API 응답 상태 확인
+        krw_rate = data["conversion_rates"].get("KRW", "N/A")  # USD to KRW 환율
+        rub_rate = data["conversion_rates"].get("RUB", "N/A")  # USD to RUB 환율
+        return f"-미국 달러(USD) 환율: {krw_rate} 원 \n-러시아 루블(RUB) 환율: {rub_rate} 루블"
     return "환율 정보를 가져오는 데 실패했습니다."
+
 
 def update_readme():
     """README.md 파일을 업데이트"""
