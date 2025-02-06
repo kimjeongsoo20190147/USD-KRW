@@ -17,7 +17,7 @@ jobs:
         with:
           python-version: "3.11"
 
-      - name: 한국 수출입은행 API로 USD-KRW 환율 업데이트
+      - name: API로 USD-KRW 환율 업데이트
         run: |
           pip install requests python-dotenv
           python update_dol_won.py

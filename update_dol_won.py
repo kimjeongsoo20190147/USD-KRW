@@ -7,21 +7,19 @@ load_dotenv()
 
 # API 키 설정
 API_KEY = os.getenv("DOLLARWON_API_KEY")
-SEARCHDATE = datetime.now().strftime("%Y%m%d")  # YYYYMMDD 형식
-URL = f"https://www.koreaexim.go.kr/site/program/financial/exchangeJSON?authkey={API_KEY}&searchdate={SEARCHDATE}&data=AP01"
+URL = f"https://v6.exchangerate-api.com/v6/{API_KEY}/latest/USD"
 
 # README 파일 경로
 README_PATH = "README.md"
 
 def get_exchange_rate():
-    """한국 수출입은행 API를 호출하여 달러-원 환율 정보를 가져옴"""
+    """Exchangerate API를 호출하여 달러-원 환율 정보를 가져옴"""
     response = requests.get(URL)
     if response.status_code == 200:
         data = response.json()
-        for item in data:
-            if item["cur_unit"] == "USD":  # 미국 달러 정보 필터링
-                usd_rate = item["deal_bas_r"]  # 매매 기준율
-                return f"미국 달러(USD) 환율: {usd_rate} 원"
+        if "conversion_rates" in data and "KRW" in data["conversion_rates"]:
+            krw_rate = data["conversion_rates"]["KRW"]  # USD to KRW 환율
+            return f"미국 달러(USD) 환율: {krw_rate} 원"
     return "환율 정보를 가져오는 데 실패했습니다."
 
 def update_readme():
@@ -31,7 +29,8 @@ def update_readme():
 
     readme_content = f"""
 
-# USD-KRW Exchange Rate Status
+
+# USD-KRW Exchange Rate Status(달러-원 환율)
 
 * IMF 금융위기 환율(달러) 최고 피크 1$ - 2000원
 * 2008년 금융위기 환율(달러) 최고 피크 1$ - 1600원
@@ -47,14 +46,12 @@ def update_readme():
 
 ⏳ 업데이트 시간: {now} (UTC)
 
-(이 리포지토리는 한국 수출입은행 API를 사용하여 달러-원 환율 정보를 자동으로 업데이트합니다.)
 ---
 """
+
 
     with open(README_PATH, "w", encoding="utf-8") as file:
         file.write(readme_content)
 
 if __name__ == "__main__":
     update_readme()
-
-
