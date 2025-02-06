@@ -13,13 +13,14 @@ URL = f"https://v6.exchangerate-api.com/v6/{API_KEY}/latest/USD"
 README_PATH = "README.md"
 
 def get_exchange_rate():
-    """Exchangerate API를 호출하여 달러-원 환율 정보를 가져옴"""
+    """Exchangerate API를 호출하여 달러-원 및 루블-원 환율 정보를 가져옴"""
     response = requests.get(URL)
     if response.status_code == 200:
         data = response.json()
-        if "conversion_rates" in data and "KRW" in data["conversion_rates"]:
-            krw_rate = data["conversion_rates"]["KRW"]  # USD to KRW 환율
-            return f"미국 달러(USD) 환율: {krw_rate} 원"
+        if data.get("result") == "success":  # API 응답 상태 확인
+            krw_rate = data["conversion_rates"].get("KRW", "N/A")  # USD to KRW 환율
+            rub_rate = data["conversion_rates"].get("RUB", "N/A")  # USD to RUB 환율
+            return f"미국 달러(USD) 환율: {krw_rate} 원\n러시아 루블(RUB) 환율: {rub_rate} 루블"
     return "환율 정보를 가져오는 데 실패했습니다."
 
 def update_readme():
@@ -43,6 +44,12 @@ def update_readme():
 
 ## 현재 달러-원 환율
 > {exchange_info}
+
+
+
+(저는 노어과라 러시아도 관심이 많답니다.)
+
+
 
 ⏳ 업데이트 시간: {now} (UTC)
 
